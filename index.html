@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Rekonstruksi vector avometer analog Sanwa YX360TRF untuk media pembelajaran.">
+    <title>Simulator Avometer — Sanwa YX360TRF</title>
+    <link rel="stylesheet" href="./css/style.css">
+    <script src="./js/scale.js" defer></script>
+    <script src="./js/meter.js" defer></script>
+    <script src="./js/selector.js" defer></script>
+    <script src="./js/ranges.js" defer></script>
+    <script src="./js/adjusters.js" defer></script>
+    <script src="./js/app.js" defer></script>
+  </head>
+  <body>
+    <main class="app-shell" aria-label="Simulator avometer analog">
+      <section class="avo-workspace" aria-labelledby="workspace-title">
+        <header class="workspace-header">
+          <h2 id="workspace-title">AVOMETER ANALOG</h2>
+          <button id="view-toggle" class="button button-secondary view-toggle" type="button" aria-pressed="false">FOKUS SKALA</button>
+        </header>
+        <div class="avo-display">
+          <div class="avo-stage">
+            <svg class="avo-svg" xmlns="http://www.w3.org/2000/svg" viewBox="165 80 680 850" preserveAspectRatio="xMidYMid meet" role="group" aria-label="Sanwa YX360TRF, simulator avometer analog" aria-describedby="avo-description">
+              <desc id="avo-description">Meter multiskala, selector interaktif, pengatur nol mekanis dan ohm. Seret pengatur ke kanan atau atas untuk menambah; gunakan tombol panah saat pengatur mendapat fokus.</desc>
+              <defs>
+                <linearGradient id="case-finish" x2="1" y2="1"><stop stop-color="#b5b6b5"/><stop offset=".45" stop-color="#8e9293"/><stop offset="1" stop-color="#73797c"/></linearGradient>
+                <linearGradient id="knob-finish" x2=".8" y2="1"><stop stop-color="#929695"/><stop offset="1" stop-color="#505858"/></linearGradient>
+                <linearGradient id="glass-edge" x2="0" y2="1"><stop stop-color="#f8faf7" stop-opacity=".7"/><stop offset=".25" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#f4f8f5" stop-opacity=".16"/></linearGradient>
+              </defs>
+              <g id="avo-casing">
+                <path d="M365 113 373 89 566 87 579 112" fill="#afb2af"/>
+                <path d="M191 881 201 914 286 914 295 889 M679 889 690 918 713 918 722 884" fill="#6b706e"/>
+                <rect x="183" y="111" width="646" height="790" rx="24" fill="url(#case-finish)" stroke="#c7c8c4" stroke-width="4"/>
+                <rect x="194" y="125" width="622" height="757" rx="13" fill="#8a8f90" stroke="#686e70" stroke-width="5"/>
+                <path d="M202 865V138H807" fill="none" stroke="#c2c4c0" stroke-width="3" opacity=".8"/>
+                <rect x="212" y="537" width="450" height="327" rx="9" fill="#606665" stroke="#a8aeaa" stroke-width="4"/>
+              </g>
+              <g id="probe-storage">
+                <path d="M690 251H804V822H689Z" fill="#252828" stroke="#6a7070" stroke-width="5"/>
+                <path d="M701 806C798 835 805 765 790 685L776 298C774 253 750 259 749 299L756 702C754 753 776 782 755 808" fill="none" stroke="#141918" stroke-width="14"/>
+                <path d="M713 805C765 811 783 798 779 746L758 416" fill="none" stroke="#aa2536" stroke-width="6"/>
+                <g id="red-probe">
+                  <path d="M711 262 705 281 701 324H726L723 280 718 260Z" fill="#e53149"/>
+                  <rect x="698" y="337" width="25" height="252" rx="9" fill="#d9263d" stroke="#aa2233" stroke-width="2"/>
+                  <rect x="691" y="326" width="43" height="16" rx="4" fill="#f13e4d"/>
+                  <rect x="696" y="585" width="30" height="172" rx="9" fill="#dc2f43" stroke="#a32938" stroke-width="3"/>
+                  <path d="M701 611H719M701 621H719M701 631H719M701 642H719M701 652H719M701 662H719" stroke="#eb5462" stroke-width="3"/>
+                </g>
+                <g id="black-probe" transform="rotate(-5 765 515)">
+                  <path d="M762 280 756 302 758 347H773L770 302 766 280Z" fill="#cbd0c9"/>
+                  <rect x="754" y="345" width="24" height="237" rx="8" fill="#232a29" stroke="#535858" stroke-width="2"/>
+                  <rect x="744" y="577" width="42" height="12" rx="3" fill="#282d2c"/>
+                  <rect x="751" y="589" width="29" height="176" rx="9" fill="#232a29" stroke="#444a49" stroke-width="3"/>
+                  <path d="M757 603V745M765 603V751M773 603V744" stroke="#535a57" stroke-width="2"/>
+                </g>
+              </g>
+              <g id="meter-section">
+                <path d="M207 146H666V491L641 520H206Z" fill="#cad1cb" stroke="#5c6667" stroke-width="6"/>
+                <path d="M217 157H654V482L635 507H217Z" fill="#f5f5ec" stroke="#adb4b0" stroke-width="2"/>
+                <text x="648" y="175" text-anchor="end" font-size="12" font-weight="700">MADE IN JAPAN</text>
+                <g id="meter-scale" transform="translate(209 158) scale(.55)"></g>
+                <g id="meter-brand" font-family="Arial, sans-serif">
+                  <text x="226" y="411" fill="#cb3055" font-size="37" font-weight="800" letter-spacing="-2">sanwa</text>
+                  <text x="228" y="426" fill="#7b8981" font-size="9" letter-spacing="1">MULTITESTER</text>
+                  <text x="228" y="441" font-size="15" font-weight="700">YX360TRF</text>
+                  <text x="228" y="452" font-size="8" fill="#65736c">20kΩ/V DC</text>
+                  <text x="228" y="462" font-size="8" fill="#65736c">9kΩ/V AC</text>
+                  <text x="229" y="494" font-size="28" fill="#33453f">CE</text>
+                  <g transform="translate(554 388)">
+                    <rect width="50" height="24" fill="none" stroke="#ad6670"/>
+                    <path d="m34 3 7 7-7 7-7-7Z M9 6h5m-8 5h5m-5 5h5m8 0h5" fill="#cf4e67" stroke="#cf4e67"/>
+                    <rect y="25" width="50" height="10" fill="#303937"/>
+                    <text x="25" y="32" text-anchor="middle" fill="white" font-size="6.5">DROP PROOF</text>
+                    <text x="25" y="49" text-anchor="middle" font-size="8">FUSE</text>
+                    <rect y="52" width="50" height="10" fill="#c55359"/>
+                    <text x="25" y="60" text-anchor="middle" fill="white" font-size="6.2">DIODE</text>
+                    <text x="25" y="73" text-anchor="middle" font-size="7">PROTECTION</text>
+                  </g>
+                  <g transform="translate(616 389)" fill="none" stroke="#b47956">
+                    <rect width="25" height="18" rx="3"/><path d="M20 14Q12 6 5 14M12 15V3"/>
+                    <text x="12" y="28" text-anchor="middle" fill="#45534f" stroke="none" font-size="8">NULL</text>
+                    <text x="12" y="37" text-anchor="middle" fill="#45534f" stroke="none" font-size="8">METER</text>
+                  </g>
+                </g>
+                <!-- Fixed pivot; the moving needle is separate from its hub. -->
+                <g id="zero-adjustment">
+                  <path d="M336 415H529V510H336Z" fill="#d7ddd4" fill-opacity=".86" stroke="#bfc8bf" stroke-width="2"/>
+                  <path d="M343 426H520M343 434H520M343 442H520M343 450H520M343 458H520M343 466H520M343 474H520M343 482H520M343 490H520M343 498H520" stroke="#f5f6ec" stroke-width="2"/>
+                  <g id="mechanical-adjuster" class="adjuster" role="slider" tabindex="0" aria-label="Pengatur nol mekanis" aria-valuemin="-3" aria-valuemax="3" aria-valuenow="0" aria-describedby="adjuster-help">
+                    <circle cx="430" cy="490" r="32" fill="#969f97" stroke="#c1c8be" stroke-width="4"/>
+                    <circle cx="430" cy="490" r="26" fill="#858f87" stroke="#626f67" stroke-width="2"/>
+                    <g id="zero-screw-rotor">
+                      <path d="M408 486 451 492" stroke="#dce1d7" stroke-width="6"/>
+                      <path d="M408 484 451 490" stroke="#5b655e" stroke-width="2"/>
+                    </g>
+                  </g>
+                </g>
+                <g id="needle-system" data-pivot-x="430" data-pivot-y="490" pointer-events="none">
+                  <g id="needle-rotor"><path id="needle-blade" fill="#323a32" stroke="#323a32" stroke-width=".45" stroke-linejoin="round"/><path id="needle-hit" role="slider" tabindex="0" aria-label="Posisi jarum, seret atau gunakan tombol panah" aria-valuemin="-5" aria-valuemax="80" aria-valuenow="0" fill="none" stroke="transparent" stroke-width="22" pointer-events="stroke"/></g>
+                  <circle cx="430" cy="490" r="4.5" fill="#626c61"/>
+                </g>
+                <path d="M210 149H663V489L640 516H210Z" fill="url(#glass-edge)" stroke="#d9ded5" stroke-width="3" pointer-events="none"/>
+              </g>
+              <g id="selector-panel" transform="translate(225 549) scale(.307)">
+                <rect width="1400" height="986" rx="22" fill="#5a605d"/>
+                <g id="panel-labels"></g>
+                <g id="selector-knob" data-center-x="610" data-center-y="465">
+                  <circle cx="610" cy="465" r="323" fill="#353d39" stroke="#999f97" stroke-width="7"/>
+                  <circle cx="610" cy="465" r="307" fill="url(#knob-finish)" stroke="#151f1b" stroke-width="7"/>
+                  <circle cx="610" cy="465" r="293" fill="none" stroke="#abb0a6" stroke-width="5"/>
+                  <g id="selector-rotor">
+                    <path d="M289 413Q289 400 307 400H891L914 425V503L891 529H306Q289 529 289 514Z" fill="#a0a59d" stroke="#59625a" stroke-width="7"/>
+                    <path d="M309 415H855V510H309Z" fill="#8b9289"/>
+                    <path d="M309 415H852L880 427" fill="none" stroke="#c0c5b9" stroke-width="6"/>
+                    <path d="M868 413 911 425V503L868 519Z" fill="#687369"/>
+                    <path d="M881 463H916" stroke="#d7dcd0" stroke-width="8"/>
+                  </g>
+                </g>
+              </g>
+              <g id="ohm-adjust" class="adjuster" role="slider" tabindex="-1" aria-label="Pengatur nol ohm" aria-valuemin="-1" aria-valuemax="1" aria-valuenow="0" aria-disabled="true" aria-describedby="adjuster-help">
+                <circle cx="624" cy="548" r="66" fill="#4c5753" stroke="#b6bdb4" stroke-width="4"/>
+                <g id="ohm-adjust-rotor">
+                <g id="ohm-ridges"></g>
+                <circle cx="624" cy="548" r="49" fill="#929d94" stroke="#59675e" stroke-width="3"/>
+                <circle cx="624" cy="548" r="43" fill="none" stroke="#a6afa4" stroke-width="1.5"/>
+                <path d="M624 508V519" stroke="#e4e8db" stroke-width="3" stroke-linecap="round"/>
+                </g>
+              </g>
+              <g id="reference-overlay" pointer-events="none" aria-hidden="true"></g>
+            </svg>
+          </div>
+        </div>
+        <p class="workspace-caption">Sanwa YX360TRF <span>Multitester analog</span><span class="watermark">by Arfin Maulana</span></p>
+      </section>
+
+      <aside class="control-panel" aria-labelledby="app-title">
+        <header class="panel-header">
+          <p class="eyebrow">MEDIA PEMBELAJARAN</p>
+          <h1 id="app-title">SIMULATOR AVOMETER</h1>
+          <p class="model-name">Sanwa YX360TRF</p>
+        </header>
+
+        <section class="card" aria-labelledby="practice-title">
+          <h2 id="practice-title">Latihan</h2>
+          <dl class="practice-settings">
+            <div><dt><label for="quiz-mode">Mode soal</label></dt><dd><select id="quiz-mode"><option>DCV</option><option>ACV</option><option value="OHM">OHM BACA</option></select></dd></div>
+            <div><dt><label for="question-position">Posisi soal</label></dt><dd><select id="question-position"><option value="tick">GARIS</option><option value="midpoint">TENGAH</option><option value="mixed" selected>CAMPURAN</option></select></dd></div>
+            <div><dt>Range</dt><dd id="active-range">-</dd></div>
+          </dl>
+          <button id="random-question" class="button button-primary" type="button">ACAK SOAL</button>
+          <button id="check-answer" class="button button-secondary" type="button" aria-expanded="false" aria-controls="reading-explanation">CEK JAWABAN</button>
+          <button id="reset-instrument" class="button button-quiet" type="button">↻ RESET ALAT</button>
+          <div id="ohm-controls" hidden>
+            <p id="ohm-status" class="calibration-status" role="status"></p>
+            <button id="probe-toggle" class="button button-quiet" type="button">SHORT PROBE</button>
+          </div>
+        </section>
+
+        <section class="card explanation" aria-labelledby="explanation-title">
+          <h2 id="explanation-title">Pembahasan</h2>
+          <div id="reading-explanation" hidden>
+          <dl class="reading-details">
+            <div><dt>Range</dt><dd id="answer-range">-</dd></div>
+            <div><dt>Skala baca</dt><dd id="answer-scale">-</dd></div>
+            <div><dt>Baca skala</dt><dd id="answer-reading">-</dd></div>
+            <div><dt>Faktor range</dt><dd id="answer-multiplier">-</dd></div>
+            <div class="reading-result"><dt>Hasil</dt><dd id="answer-result">-</dd></div>
+          </dl>
+          <p id="answer-explanation" class="explanation-placeholder">Pilih mode lalu tekan ACAK SOAL.</p>
+          </div>
+        </section>
+        <p id="adjuster-help" class="stage-note">Putar selector, seret jarum, lalu CEK JAWABAN. Tombol panah dapat mengatur jarum. Ω ADJ digunakan dalam DEMO KALIBRASI.</p>
+      </aside>
+    </main>
+  </body>
+</html>
