@@ -150,22 +150,13 @@ window.AvoApp = (() => {
     getValue:()=>state.ohmAdjustOffset,onChange:setOhmAdjustment});
   // Pointer coordinates use the same SVG matrix in full and focus views.
   const hit=$('needle-hit'), svg=document.querySelector('.avo-svg');
-  // SVG graphics do not consistently establish a CSS touch-action region.
-  // Suppress only native gestures starting on draggable controls; all movement,
-  // capture and state still use the shared Pointer Events handlers below.
-  [hit,$('selector-knob'),$('mechanical-adjuster'),$('ohm-adjust')].forEach(control=>{
-    control.addEventListener('touchstart',event=>{
-      if(control.getAttribute('aria-disabled')!=='true') event.preventDefault();
-    },{passive:false});
-    control.addEventListener('dragstart',event=>event.preventDefault());
-  });
   let needleDrag=null;
   const pointerAngle=event=>{
     const p=new DOMPoint(event.clientX,event.clientY).matrixTransform(svg.getScreenCTM().inverse());
     return Math.atan2(p.x-AvoMeter.pivot.x,AvoMeter.pivot.y-p.y)*180/Math.PI-AvoMeter.restAngle;
   };
   hit.addEventListener('pointerdown',event=>{
-    if(!event.isPrimary || event.button!==0 || needleDrag!==null || state.shortProbes) return;
+    if(event.button!==0 || needleDrag!==null || state.shortProbes) return;
     event.preventDefault(); needleDrag=event.pointerId; hit.setPointerCapture(event.pointerId);
     setManualNeedle(pointerAngle(event),true);
   });

@@ -82,12 +82,8 @@ window.AvoSelector = (() => {
       const label = text(x, y, value, value === "OFF" ? 57 : 47, color);
       label.classList.add('selector-label');
       label.addEventListener('click', () => selectDetent(detent.id));
-      // Fill the available sector without overlapping the neighboring detent.
-      const detentIndex=selectorDetents.indexOf(detent);
-      const start=((selectorDetents[detentIndex-1]?.angle ?? detent.angle-14)+detent.angle)/2*Math.PI/180;
-      const end=((selectorDetents[detentIndex+1]?.angle ?? detent.angle+14)+detent.angle)/2*Math.PI/180;
       const target = el('path', {
-        d: `M${center.x+330*Math.cos(start)} ${center.y+330*Math.sin(start)} L${center.x+480*Math.cos(start)} ${center.y+480*Math.sin(start)} A480 480 0 0 1 ${center.x+480*Math.cos(end)} ${center.y+480*Math.sin(end)} L${center.x+330*Math.cos(end)} ${center.y+330*Math.sin(end)}Z`,
+        d: `M${center.x+330*Math.cos(angle-.055)} ${center.y+330*Math.sin(angle-.055)} L${center.x+480*Math.cos(angle-.055)} ${center.y+480*Math.sin(angle-.055)} A480 480 0 0 1 ${center.x+480*Math.cos(angle+.055)} ${center.y+480*Math.sin(angle+.055)} L${center.x+330*Math.cos(angle+.055)} ${center.y+330*Math.sin(angle+.055)}Z`,
         fill:'transparent', class:'selector-target', role:'button', tabindex:0,
         'aria-label':detent.label, 'data-detent':detent.id, 'aria-pressed':String(detent.id===activeDetent.id)
       }, root);
@@ -127,7 +123,7 @@ window.AvoSelector = (() => {
       return Math.atan2(p.y-center.y,p.x-center.x)*180/Math.PI;
     }
     knob.onpointerdown = event => {
-      if (!event.isPrimary || event.button !== 0 || drag) return;
+      if (event.button !== 0 || drag) return;
       event.preventDefault(); cancelAnimationFrame(frame);
       drag = { id:event.pointerId, previous:pointerAngle(event), angle:displayedAngle };
       knob.setPointerCapture(event.pointerId);

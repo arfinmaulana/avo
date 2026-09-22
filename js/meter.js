@@ -33,26 +33,8 @@ window.AvoMeter = (() => {
     bladePoint(geometry.needleLength,0),bladePoint(geometry.needleLength-2,.5),bladePoint(0,1.15)];
   document.querySelector('#needle-blade').setAttribute('d',
     blade.map((p,i)=>`${i ? 'L' : 'M'}${p.x} ${p.y}`).join(' ')+'Z');
-  // Invisible targets use CSS-pixel size in either camera; blade geometry is unchanged.
-  const svg=document.querySelector('.avo-svg');
-  function sizeHitTargets() {
-    // Detail previews may remove the instrument while keeping the SVG viewport.
-    const mechanical=document.getElementById('mechanical-hit');
-    const ohm=document.getElementById('ohm-hit'), hit=document.getElementById('needle-hit');
-    if(!svg.isConnected || !mechanical || !ohm || !hit) return;
-    const matrix=svg.getScreenCTM();
-    const scale=matrix && Math.hypot(matrix.a,matrix.b);
-    if(!scale) return;
-    const zeroRadius=Math.max(32,22/scale);
-    mechanical.setAttribute('r',zeroRadius);
-    ohm.setAttribute('r',Math.max(70,22/scale));
-    const hitStart=bladePoint(Math.max(45,zeroRadius+8),0), hitEnd=bladePoint(geometry.needleLength,0);
-    hit.setAttribute('stroke-width',Math.max(22,44/scale));
-    hit.setAttribute('d',`M${hitStart.x} ${hitStart.y} L${hitEnd.x} ${hitEnd.y}`);
-  }
-  new ResizeObserver(sizeHitTargets).observe(svg);
-  new MutationObserver(sizeHitTargets).observe(svg,{attributes:true,attributeFilter:['viewBox']});
-  sizeHitTargets();
+  const hitStart=bladePoint(45,0), hitEnd=bladePoint(geometry.needleLength,0);
+  document.getElementById('needle-hit').setAttribute('d',`M${hitStart.x} ${hitStart.y} L${hitEnd.x} ${hitEnd.y}`);
   let needleAngle = 0, displayedAngle = 0, frame = 0;
   function setNeedleAngle(angle, animate = true) {
     if (!Number.isFinite(angle)) throw new TypeError("needleAngle harus angka finite.");

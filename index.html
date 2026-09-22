@@ -2,7 +2,7 @@
 <html lang="id">
   <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Rekonstruksi vector avometer analog Sanwa YX360TRF untuk media pembelajaran.">
     <title>Simulator Avometer — Sanwa YX360TRF</title>
     <link rel="stylesheet" href="./css/style.css">
@@ -89,7 +89,6 @@
                   <path d="M336 415H529V510H336Z" fill="#d7ddd4" fill-opacity=".86" stroke="#bfc8bf" stroke-width="2"/>
                   <path d="M343 426H520M343 434H520M343 442H520M343 450H520M343 458H520M343 466H520M343 474H520M343 482H520M343 490H520M343 498H520" stroke="#f5f6ec" stroke-width="2"/>
                   <g id="mechanical-adjuster" class="adjuster" role="slider" tabindex="0" aria-label="Pengatur nol mekanis" aria-valuemin="-3" aria-valuemax="3" aria-valuenow="0" aria-describedby="adjuster-help">
-                    <circle id="mechanical-hit" cx="430" cy="490" r="46" fill="transparent"/>
                     <circle cx="430" cy="490" r="32" fill="#969f97" stroke="#c1c8be" stroke-width="4"/>
                     <circle cx="430" cy="490" r="26" fill="#858f87" stroke="#626f67" stroke-width="2"/>
                     <g id="zero-screw-rotor">
@@ -108,7 +107,6 @@
                 <rect width="1400" height="986" rx="22" fill="#5a605d"/>
                 <g id="panel-labels"></g>
                 <g id="selector-knob" data-center-x="610" data-center-y="465">
-                  <circle cx="610" cy="465" r="329" fill="transparent"/>
                   <circle cx="610" cy="465" r="323" fill="#353d39" stroke="#999f97" stroke-width="7"/>
                   <circle cx="610" cy="465" r="307" fill="url(#knob-finish)" stroke="#151f1b" stroke-width="7"/>
                   <circle cx="610" cy="465" r="293" fill="none" stroke="#abb0a6" stroke-width="5"/>
@@ -122,7 +120,6 @@
                 </g>
               </g>
               <g id="ohm-adjust" class="adjuster" role="slider" tabindex="-1" aria-label="Pengatur nol ohm" aria-valuemin="-1" aria-valuemax="1" aria-valuenow="0" aria-disabled="true" aria-describedby="adjuster-help">
-                <circle id="ohm-hit" cx="624" cy="548" r="70" fill="transparent"/>
                 <circle cx="624" cy="548" r="66" fill="#4c5753" stroke="#b6bdb4" stroke-width="4"/>
                 <g id="ohm-adjust-rotor">
                 <g id="ohm-ridges"></g>
@@ -135,7 +132,7 @@
             </svg>
           </div>
         </div>
-        <p class="workspace-caption"><span class="watermark">by Arfin Maulana</span></p>
+        <p class="workspace-caption">Sanwa YX360TRF <span>Multitester analog</span><span class="watermark">by Arfin Maulana</span></p>
       </section>
 
       <aside class="control-panel" aria-labelledby="app-title">
@@ -154,10 +151,7 @@
           </dl>
           <button id="random-question" class="button button-primary" type="button">ACAK SOAL</button>
           <button id="check-answer" class="button button-secondary" type="button" aria-expanded="false" aria-controls="reading-explanation">CEK JAWABAN</button>
-          <div class="utility-actions">
-            <button id="reset-instrument" class="button button-quiet" type="button">↻ RESET ALAT</button>
-            <a id="manual-link" class="button button-quiet" href="./assets/manual/Sanwa_YX360TRF_Instruction_Manual.pdf" target="_blank" rel="noopener noreferrer">? PETUNJUK MANUAL</a>
-          </div>
+          <button id="reset-instrument" class="button button-quiet" type="button">↻ RESET ALAT</button>
           <div id="ohm-controls" hidden>
             <p id="ohm-status" class="calibration-status" role="status"></p>
             <button id="probe-toggle" class="button button-quiet" type="button">SHORT PROBE</button>
