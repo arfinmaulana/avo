@@ -1,4 +1,4 @@
-﻿:root { color-scheme: light; font-family: 'Segoe UI', Arial, sans-serif; font-synthesis: none; color: #243345; background: #f8f9f9; --accent: #175b69; --border: #dce3e8; --muted: #5e6c7b; --space: clamp(10px, 1.6vh, 16px); }
+:root { color-scheme: light; font-family: 'Segoe UI', Arial, sans-serif; font-synthesis: none; color: #243345; background: #f8f9f9; --accent: #175b69; --border: #dce3e8; --muted: #5e6c7b; --space: clamp(10px, 1.6vh, 16px); }
 * { box-sizing: border-box; }
 html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; }
 button, input, select { font: inherit; min-width: 0; }
@@ -113,4 +113,49 @@ dt { color: var(--muted); } dd { margin: 0; }
   .reading-result { padding-top: 6px; }
   .explanation-placeholder { margin-top: 8px; }
   .calibration-status { margin: 8px 0 6px; }
+}
+
+/* Contextual toolbar; both views retain the full workspace height. */
+.panel-header { position: relative; padding-right: 62px; }
+.panel-header h1 { font-size: 16px; }
+.manual-link { position: absolute; right: 0; top: 0; min-height: 44px; display: flex; align-items: center; color: var(--muted); font-size: 12px; text-decoration: none; }
+.manual-link:focus-visible { outline: 2px solid #168aaf; outline-offset: 2px; }
+.mode-switch, .scale-switch { display: flex; gap: 3px; padding: 3px; background: #e3eaed; border-radius: 7px; }
+.mode-switch { flex: 0 0 auto; }
+.mode-switch .button, .scale-switch .button { flex: 1; color: #4b5d6e; font-size: 12px; font-weight: 500; background: transparent; }
+.mode-switch [aria-pressed="true"], .scale-switch [aria-pressed="true"] { background: #fff; color: var(--accent); box-shadow: 0 1px 3px #24334518; font-weight: 650; }
+.utility-actions { grid-template-columns: 1fr; }
+#learning-scales { border: 0; padding: 0; margin: 12px 0 0; min-width: 0; }
+#learning-scales legend { font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+.learning-original { font-size: 11px; color: var(--muted); line-height: 1.5; margin: 12px 0 0; }
+.learning-formula { padding: 12px; border-radius: 5px; background: #edf5f5; color: var(--accent); font-size: 17px; line-height: 1.5; overflow-wrap: anywhere; }
+.avo-workspace.is-learning { position: relative; display: block; overflow: hidden; }
+.is-learning .workspace-header { position: absolute; top: 14px; left: 20px; right: 20px; z-index: 1; pointer-events: none; }
+#learning-display { position: relative; width: 100%; height: 100%; min-width: 0; min-height: 0; overflow: hidden; container-type: size; }
+/* These zones depend only on stage dimensions, including at OFF. The SVG's meet
+   camera applies min(availableWidth/designWidth, availableHeight/designHeight). */
+#learning-display { --selector-width: min(320px, 55cqw, 60cqh); --selector-height: calc(var(--selector-width) * 986 / 1400); }
+#learning-svg { position: absolute; left: 0; top: 28px; width: 100%; height: calc(100% - var(--selector-height) - 62px); display: block; font-family: Arial, sans-serif; }
+#learning-selector { position: absolute; right: 0; bottom: 28px; display: block; width: var(--selector-width); height: var(--selector-height); }
+#learning-unavailable { position: absolute; top: 40px; left: 0; right: 0; margin: 0; text-align: center; pointer-events: none; }
+#learning-display .workspace-caption { position: absolute; bottom: 0; left: 0; right: 0; pointer-events: none; }
+/* Short landscape reserves a side zone, keeping a full-height radial needle. */
+@container (min-aspect-ratio: 1.2) {
+  #learning-svg, #learning-selector { --selector-width: min(320px, 45cqw, 50cqh); }
+  #learning-svg { width: calc(100% - var(--selector-width) - 12px); height: calc(100% - 56px); }
+}
+.learning-formula { white-space: pre-line; font-size: 15px; }
+.scale-switch [aria-pressed="true"]::before { content: '✓ '; }
+#learning-hit { touch-action: none; cursor: grab; user-select: none; -webkit-user-select: none; }
+#learning-hit:focus-visible { outline: none; stroke: #168aaf33; }
+.selector-target:focus { outline: none; }
+.selector-target:focus-visible { stroke: #61d4f5; stroke-width: 7; fill: #168aaf44; }
+#selector-knob:focus { outline: none; }
+#selector-panel:has(.selector-target:focus-visible) #selector-knob > circle:nth-child(2) { stroke: #61d4f5; stroke-width: 10; }
+@media (max-width: 799px) {
+  .avo-workspace.is-learning, .avo-workspace.is-learning:has(.is-focused) { height: clamp(540px, 70svh, 760px); min-height: 0; }
+}
+@media (min-width: 800px) and (max-height: 850px) {
+  .panel-header .eyebrow { display: none; }
+  .card { padding: 8px; }
 }

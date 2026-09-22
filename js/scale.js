@@ -180,5 +180,5 @@ window.AvoScale = (() => {
     });
     element("path", { d: "M194 296h27v13h-27z M197 305q10-8 21 0 M207 307v-10", fill: "none", stroke: colors.null, "stroke-width": 1.7 }, sides);
   }
-  return { render, scaleCalibration, meterGeometry, ohmTickAngles, ohmTicks, tracedTickAngles, point, element, ticks };
+  return { render, scaleCalibration, meterGeometry, ohmTickAngles, ohmTicks, tracedTickAngles, point, element, ticks, arc, tick, radialLabel };
 })();

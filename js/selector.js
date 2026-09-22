@@ -18,6 +18,28 @@ window.AvoSelector = (() => {
     ['dc50','DCV 50',209], ['dc250','DCV 250',224], ['dc1000','DCV 1000',237]
   ].map(([id,label,angle]) => ({id,label,angle}));
   const limits = { min: selectorDetents[0].angle, max: selectorDetents.at(-1).angle };
+  // One live component and engine, mounted in either workspace (never cloned).
+  let instrumentMount, instrumentNext, instrumentTransform, gradientMount, finishDrag;
+  function mountLearning(learning) {
+    const panel = document.getElementById('selector-panel');
+    if (!instrumentMount) {
+      instrumentMount=panel.parentNode; instrumentNext=panel.nextSibling;
+      instrumentTransform=panel.getAttribute('transform');
+      gradientMount=document.getElementById('knob-finish').parentNode;
+    }
+    finishDrag?.();
+    if (learning) {
+      document.getElementById('learning-selector').append(panel);
+      document.getElementById('learning-selector-defs').append(document.getElementById('knob-finish'));
+      panel.removeAttribute('transform');
+    } else {
+      instrumentMount.insertBefore(panel,instrumentNext);
+      panel.setAttribute('transform',instrumentTransform);
+      gradientMount.append(document.getElementById('knob-finish'));
+    }
+    panel.querySelectorAll('[data-detent]').forEach(node=>node.setAttribute('tabindex',
+      learning || !window.AvoApp?.state.focusView ? '0' : '-1'));
+  }
   const clamp = angle => Math.max(limits.min, Math.min(limits.max, angle));
   const nearest = angle => selectorDetents.reduce((a,b) => Math.abs(b.angle-angle) < Math.abs(a.angle-angle) ? b : a);
   let activeDetent = selectorDetents.find(d => d.id === 'off');
@@ -146,9 +168,10 @@ window.AvoSelector = (() => {
       if (knob.hasPointerCapture(id)) knob.releasePointerCapture(id);
       selectDetent(nearest(displayedAngle).id);
     };
+    finishDrag = () => { if (drag) finish({pointerId:drag.id}); };
     knob.onpointerup = finish; knob.onpointercancel = finish; knob.onlostpointercapture = finish;
   }
-  return { render, setSelectorAngle, selectDetent, selectorDetents, limits,
+  return { render, mountLearning, setSelectorAngle, selectDetent, selectorDetents, limits,
     get activeDetent() { return activeDetent; }, get selectorAngle() { return selectorAngle; }, center };
 })();
 window.setSelectorAngle = window.AvoSelector.setSelectorAngle;

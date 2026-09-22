@@ -11,7 +11,9 @@
     <script src="./js/selector.js" defer></script>
     <script src="./js/ranges.js" defer></script>
     <script src="./js/adjusters.js" defer></script>
+    <script src="./js/probes.js" defer></script>
     <script src="./js/app.js" defer></script>
+    <script src="./js/learning.js" defer></script>
   </head>
   <body>
     <main class="app-shell" aria-label="Simulator avometer analog">
@@ -42,6 +44,7 @@
                 <path d="M701 806C798 835 805 765 790 685L776 298C774 253 750 259 749 299L756 702C754 753 776 782 755 808" fill="none" stroke="#141918" stroke-width="14"/>
                 <path d="M713 805C765 811 783 798 779 746L758 416" fill="none" stroke="#aa2536" stroke-width="6"/>
                 <g id="red-probe">
+                  <path d="M714 261V246" stroke="#d6dcd8" stroke-width="3" stroke-linecap="round"/>
                   <path d="M711 262 705 281 701 324H726L723 280 718 260Z" fill="#e53149"/>
                   <rect x="698" y="337" width="25" height="252" rx="9" fill="#d9263d" stroke="#aa2233" stroke-width="2"/>
                   <rect x="691" y="326" width="43" height="16" rx="4" fill="#f13e4d"/>
@@ -49,11 +52,16 @@
                   <path d="M701 611H719M701 621H719M701 631H719M701 642H719M701 652H719M701 662H719" stroke="#eb5462" stroke-width="3"/>
                 </g>
                 <g id="black-probe" transform="rotate(-5 765 515)">
+                  <path d="M765 281V266" stroke="#d6dcd8" stroke-width="3" stroke-linecap="round"/>
                   <path d="M762 280 756 302 758 347H773L770 302 766 280Z" fill="#cbd0c9"/>
                   <rect x="754" y="345" width="24" height="237" rx="8" fill="#232a29" stroke="#535858" stroke-width="2"/>
                   <rect x="744" y="577" width="42" height="12" rx="3" fill="#282d2c"/>
                   <rect x="751" y="589" width="29" height="176" rx="9" fill="#232a29" stroke="#444a49" stroke-width="3"/>
                   <path d="M757 603V745M765 603V751M773 603V744" stroke="#535a57" stroke-width="2"/>
+                </g>
+                <g id="probe-contact" opacity="0" aria-hidden="true" pointer-events="none">
+                  <circle cx="746" cy="244" r="5" fill="#e9d889"/>
+                  <text x="746" y="230" text-anchor="middle" fill="#354137" font-size="10">Probe terhubung</text>
                 </g>
               </g>
               <g id="meter-section">
@@ -135,15 +143,52 @@
             </svg>
           </div>
         </div>
+        <div id="learning-display" hidden>
+          <svg id="learning-svg" xmlns="http://www.w3.org/2000/svg" role="group" aria-label="Skala pembelajaran tunggal" preserveAspectRatio="xMidYMid meet">
+            <g id="learning-scale"></g>
+            <path id="learning-needle" fill="#354137" stroke="#354137" stroke-width=".6" stroke-linejoin="round" pointer-events="none"/>
+            <path id="learning-hit" role="slider" tabindex="0" aria-label="Posisi jarum belajar; gunakan panah, Home, atau End" aria-valuemin="0" aria-valuemax="100" aria-valuenow="60" fill="none" stroke="transparent" pointer-events="stroke"/>
+            <circle id="learning-pivot" r="6" fill="#626c61" pointer-events="none"/>
+          </svg>
+          <p id="learning-unavailable" class="explanation-placeholder" hidden>Pilih range DCV, ACV, atau Ω pada selector.</p>
+          <svg id="learning-selector" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 986" role="group" aria-label="Selector range Belajar Skala"><defs id="learning-selector-defs"></defs></svg>
+        </div>
         <p class="workspace-caption"><span class="watermark">by Arfin Maulana</span></p>
       </section>
 
       <aside class="control-panel" aria-labelledby="app-title">
         <header class="panel-header">
+          <a id="manual-link" class="manual-link" href="./assets/manual/Sanwa_YX360TRF_Instruction_Manual.pdf" target="_blank" rel="noopener noreferrer" aria-label="Petunjuk manual PDF, tab baru">Manual ↗</a>
           <p class="eyebrow">MEDIA PEMBELAJARAN</p>
           <h1 id="app-title">SIMULATOR AVOMETER</h1>
           <p class="model-name">Sanwa YX360TRF</p>
         </header>
+        <div class="mode-switch" role="group" aria-label="Mode aplikasi">
+          <button id="mode-learning" class="button" type="button" aria-pressed="false">Belajar Skala</button>
+          <button id="mode-simulator" class="button" type="button" aria-pressed="true">Simulator AVO</button>
+        </div>
+        <section id="learning-controls" class="card" hidden aria-label="Kontrol Belajar Skala">
+          <fieldset id="learning-scales"><legend>Skala tampil</legend>
+            <div class="scale-switch" role="group" aria-label="Skala tampil">
+              <button class="button" data-learning-scale="10" aria-pressed="true" type="button">0–10</button>
+              <button class="button" data-learning-scale="50" aria-pressed="false" type="button">0–50</button>
+              <button class="button" data-learning-scale="250" aria-pressed="false" type="button">0–250</button>
+            </div>
+          </fieldset>
+          <p id="learning-original" class="learning-original"></p>
+        </section>
+        <section id="learning-explanation" class="card" hidden aria-label="Hubungan range dan skala">
+          <dl class="reading-details">
+            <div><dt id="learning-full-label">Range aktif</dt><dd id="learning-full"></dd></div>
+            <div id="learning-relative-row"><dt>Posisi relatif</dt><dd id="learning-relative"></dd></div>
+            <div><dt>Baca skala</dt><dd id="learning-reading"></dd></div>
+            <div><dt>Faktor range</dt><dd id="learning-factor"></dd></div>
+            <div class="reading-result"><dt>Hasil</dt><dd id="learning-result"></dd></div>
+          </dl>
+          <p id="learning-formula" class="learning-formula"></p>
+          <p id="learning-note" class="explanation-placeholder"></p>
+          <p class="explanation-placeholder">Seret jarum; saat dilepas, jarum menempel ke garis atau titik tengah. Keyboard: panah, Home / End.</p>
+        </section>
 
         <section class="card" aria-labelledby="practice-title">
           <h2 id="practice-title">Latihan</h2>
@@ -156,7 +201,6 @@
           <button id="check-answer" class="button button-secondary" type="button" aria-expanded="false" aria-controls="reading-explanation">CEK JAWABAN</button>
           <div class="utility-actions">
             <button id="reset-instrument" class="button button-quiet" type="button">↻ RESET ALAT</button>
-            <a id="manual-link" class="button button-quiet" href="./assets/manual/Sanwa_YX360TRF_Instruction_Manual.pdf" target="_blank" rel="noopener noreferrer">? PETUNJUK MANUAL</a>
           </div>
           <div id="ohm-controls" hidden>
             <p id="ohm-status" class="calibration-status" role="status"></p>

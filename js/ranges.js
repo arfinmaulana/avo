@@ -2,6 +2,7 @@
 
 // Range/multiplier mapping: local Sanwa manual, SCALE READING table.
 window.AvoRanges = (() => {
+  const number = value=>new Intl.NumberFormat('id-ID',{maximumFractionDigits:4}).format(value);
   const ranges = [
     ['dc01','DCV',.1,10,.01], ['dc025','DCV',.25,250,.001],
     ['dc2m5','DCV',2.5,250,.01], ['dc10','DCV',10,10,1],
@@ -110,5 +111,5 @@ window.AvoRanges = (() => {
   }
   // Educational bridge variation, not manufacturer calibration specifications.
   const ohmIdeal = {ohm1:-.35,ohm10:.15,ohm100:-.1,ohm1k:.4,ohm100k:-.5};
-  return {ranges,byId,legalNeedlePositions,nearestPosition,allowedReadingPositions,randomQuestion,needleAngle,readingAtAngle,ohmIdeal};
+  return {number,ranges,byId,legalNeedlePositions,nearestPosition,allowedReadingPositions,randomQuestion,needleAngle,readingAtAngle,ohmIdeal};
 })();

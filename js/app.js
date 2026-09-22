@@ -18,7 +18,7 @@ window.AvoApp = (() => {
     AvoScale.meterGeometry.scales.ohm.radius);
   const ohmError = ()=>isOhm() ? (state.ohmAdjustOffset-AvoRanges.ohmIdeal[state.activeSelectorDetent])*8 : 0;
   const isOhmCalibrated = ()=>isOhm() && Math.abs(ohmError()+state.mechanicalZeroOffset)<.025;
-  const number = value=>new Intl.NumberFormat('id-ID',{maximumFractionDigits:4}).format(value);
+  const number = AvoRanges.number;
   function desiredAngle() {
     return state.shortProbes ? ohmZero+ohmError()+state.mechanicalZeroOffset : state.needleAngle;
   }
@@ -60,6 +60,7 @@ window.AvoApp = (() => {
   }
 
   function render(animate=true) {
+    AvoProbes.render(state.shortProbes);
     const ohm=isOhm(), calibrated=isOhmCalibrated();
     $('active-range').textContent=AvoSelector.activeDetent.label;
     $('quiz-mode').value=state.selectedQuizMode;
@@ -122,7 +123,7 @@ window.AvoApp = (() => {
     state.focusView=!!focused;
     document.querySelector('.avo-svg').setAttribute('viewBox',focused ? FOCUS_VIEWBOX : FULL_VIEWBOX);
     document.querySelector('.avo-stage').classList.toggle('is-focused',focused);
-    document.querySelectorAll('[data-detent]').forEach(node=>node.setAttribute('tabindex',focused?'-1':'0'));
+    document.querySelectorAll('.avo-svg [data-detent]').forEach(node=>node.setAttribute('tabindex',focused?'-1':'0'));
     $('view-toggle').setAttribute('aria-pressed',String(focused));
     $('view-toggle').textContent=focused ? 'AVO PENUH' : 'FOKUS SKALA';
     render(false);
