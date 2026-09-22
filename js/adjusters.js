@@ -8,7 +8,7 @@ window.AvoAdjusters = {
       .matrixTransform(element.ownerSVGElement.getScreenCTM().inverse());
     const change=value=>onChange(Math.max(min,Math.min(max,value)));
     element.addEventListener('pointerdown',event=>{
-      if (event.button!==0 || drag || element.getAttribute('aria-disabled')==='true') return;
+      if (!event.isPrimary || event.button!==0 || drag || element.getAttribute('aria-disabled')==='true') return;
       event.preventDefault();
       drag={id:event.pointerId,start:localPoint(event),value:getValue()};
       element.setPointerCapture(event.pointerId);
