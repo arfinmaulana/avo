@@ -57,7 +57,8 @@ window.AvoLearning = (() => {
     S.element('path',{d:`M${a.x} ${a.y} A${radius} ${radius} 0 0 1 ${b.x} ${b.y}`,fill:'none',stroke:color,'stroke-width':2.5},root);
     ps.forEach((p,i)=>{
       const length=r.scale==='ohm'?S.ohmTicks[i].length:i%10===0?18:i%5===0?13:8;
-      S.tick(root,radius,p.angle,r.scale==='va'?-length:length,color,2,learningGeometry.centerX,learningGeometry.centerY);
+      const width=r.scale==='ohm'?S.ohmTicks[i].strokeWidth:2;
+      S.tick(root,radius,p.angle,r.scale==='va'?-length:length,color,width,learningGeometry.centerX,learningGeometry.centerY);
     });
     if(r.scale==='va') {
       [...state.scaleMaximums].sort((a,b)=>b-a).forEach((maximum,row)=>{

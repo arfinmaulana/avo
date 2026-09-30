@@ -41,6 +41,18 @@ window.AvoScale = (() => {
     const a = point(radius, angle, cx, cy), b = point(radius + length, angle, cx, cy);
     element("line", { x1: a.x, y1: a.y, x2: b.x, y2: b.y, stroke: color, "stroke-width": width, "data-angle": angle }, parent);
   }
+  function needlePivotInScaleSpace() {
+    const { sourceTransform: t, needlePivotX, needlePivotY } = meterGeometry;
+    return { x: (needlePivotX - t.x) / t.scale, y: (needlePivotY - t.y) / t.scale };
+  }
+  // Simulator measurement ticks retain their scanned arc base and signed length.
+  // Only the ray changes; Learning and decorative scales keep tick() semantics.
+  function meterNeedleAlignedTick(parent, radius, angle, length, color, width = 1.8) {
+    const a = point(radius, angle), pivot = needlePivotInScaleSpace();
+    const dx = a.x - pivot.x, dy = a.y - pivot.y, distance = Math.hypot(dx, dy);
+    element("line", { x1: a.x, y1: a.y, x2: a.x + dx / distance * length,
+      y2: a.y + dy / distance * length, stroke: color, "stroke-width": width, "data-angle": angle }, parent);
+  }
   function ticks(parent, { radius, startAngle, endAngle, tickCount, tickLength = 7, majorInterval = 5, color = colors.ink, cx = centerX, cy = centerY }) {
     for (let i = 0; i <= tickCount; i++) {
       const major = i % majorInterval === 0;
@@ -63,13 +75,20 @@ window.AvoScale = (() => {
   // density between anchors; their interpolation is provisional, not electrical.
   const scaleCalibration = {
     ohm: [
-      { value: "∞", angle: -36.39, divisions: 1 }, { value: "2k", angle: -35.61, divisions: 1 },
-      { value: "1k", angle: -34.84, divisions: 2 }, { value: "500", angle: -32.6, divisions: 3 },
-      { value: "200", angle: -28.62, divisions: 4 }, { value: "100", angle: -23.66, divisions: 5 },
-      { value: "50", angle: -14.77, divisions: 4 }, { value: "30", angle: -6.24, divisions: 5 },
-      { value: "20", angle: 0.9, divisions: 10 }, { value: "10", angle: 12.63, divisions: 10 },
-      { value: "5", angle: 21.94, divisions: 6 }, { value: "2", angle: 29.74, divisions: 5 },
-      { value: "1", angle: 32.63, divisions: 5 }, { value: "0", angle: 36.31, divisions: 0 }
+      {"value":"∞","angle":-36.39,"divisions":1},
+      {"value":"2k","angle":-35.61,"divisions":1},
+      {"value":"1k","angle":-34.84,"divisions":1},
+      {"value":"500","angle":-33.39,"divisions":4},
+      {"value":"200","angle":-29.4,"divisions":5},
+      {"value":"100","angle":-23.66,"divisions":10},
+      {"value":"50","angle":-14.77,"divisions":10},
+      {"value":"30","angle":-6.24,"divisions":5},
+      {"value":"20","angle":0.9,"divisions":10},
+      {"value":"10","angle":12.63,"divisions":10},
+      {"value":"5","angle":21.94,"divisions":6},
+      {"value":"2","angle":29.74,"divisions":5},
+      {"value":"1","angle":32.63,"divisions":5},
+      {"value":"0","angle":36.31,"divisions":0},
     ],
     capacitance: [
       { value: "0", angle: -34.15, divisions: 2 }, { value: ".01", angle: -30.45, divisions: 3 },
@@ -94,13 +113,86 @@ window.AvoScale = (() => {
       { value: "8", angle: 20.03, divisions: 10 }, { value: "10", angle: 34.34, divisions: 0 }
     ]
   };
-  const ohmTickAngles = [-36.39, -35.61, -34.84, -33.39, -32.6, -31.53, -30.61, -29.4, -28.62, -27.71, -26.66, -25.49, -24.55, -23.66, -23.09, -22.49, -21.86, -21.09, -20.35, -19.47, -18.45, -17.44, -16.26, -14.77, -14.17, -13.59, -12.86, -12.09, -11.31, -10.41, -9.54, -8.49, -7.51, -6.24, -5.09, -3.82, -2.35, -0.79, 0.9, 1.73, 2.78, 3.78, 4.94, 6.05, 7.2, 8.46, 9.85, 11.24, 12.63, 13.44, 14.28, 15.08, 15.91, 16.71, 17.7, 18.71, 19.7, 20.81, 21.94, 23.01, 24.18, 25.45, 26.74, 28.12, 29.74, 30.34, 30.86, 31.49, 32.01, 32.63, 33.39, 34.14, 34.83, 35.58, 36.31];
-  // Explicit medium rays read from Skala Baca.png: 40, 15, 7.5 and 2.5 Ω.
-  // 120 Ω (-24.55°) restores the missing fourth interior ray in 100–200.
-  const ohmMediumAngles = [-11.31, 6.05, 16.71, 28.12];
-  const ohmTicks = ohmTickAngles.map(angle => ({angle,
-    length: scaleCalibration.ohm.some(v=>v.angle===angle) ? 16
-      : ohmMediumAngles.includes(angle) ? 13 : 8}));
+  // Explicit transcription of root Skala Baca Ohm.png; see ohm-tick-audit.json.
+  // Roles document hierarchy; each ray owns its length and width. No minor values
+  // are inferred here. Angles survive the scan audit except the removed false ray.
+  const ohmTicks = [
+    {"angle":-36.39,"length":18.25,"strokeWidth":3.5,"role":"major","value":"∞"},
+    {"angle":-35.61,"length":38.75,"strokeWidth":3.5,"role":"major","value":"2k"},
+    {"angle":-34.84,"length":38,"strokeWidth":3.5,"role":"major","value":"1k"},
+    {"angle":-33.39,"length":26,"strokeWidth":3.5,"role":"major","value":"500"},
+    {"angle":-32.6,"length":13.75,"strokeWidth":3.5,"role":"medium"},
+    {"angle":-31.53,"length":13.75,"strokeWidth":3.5,"role":"medium"},
+    {"angle":-30.61,"length":8.75,"strokeWidth":2,"role":"minor"},
+    {"angle":-29.4,"length":14,"strokeWidth":3.5,"role":"major","value":"200"},
+    {"angle":-28.62,"length":8.75,"strokeWidth":2,"role":"minor"},
+    {"angle":-27.71,"length":8.75,"strokeWidth":2,"role":"minor"},
+    {"angle":-26.66,"length":8.75,"strokeWidth":2,"role":"minor"},
+    {"angle":-25.49,"length":9,"strokeWidth":2,"role":"minor"},
+    {"angle":-23.66,"length":13.25,"strokeWidth":3.5,"role":"major","value":"100"},
+    {"angle":-23.09,"length":9.5,"strokeWidth":2,"role":"minor"},
+    {"angle":-22.49,"length":14.5,"strokeWidth":3.5,"role":"medium"},
+    {"angle":-21.86,"length":9,"strokeWidth":2,"role":"minor"},
+    {"angle":-21.09,"length":13.75,"strokeWidth":3.5,"role":"medium"},
+    {"angle":-20.35,"length":9,"strokeWidth":2,"role":"minor"},
+    {"angle":-19.47,"length":14.5,"strokeWidth":3.5,"role":"medium"},
+    {"angle":-18.45,"length":9.5,"strokeWidth":2,"role":"minor"},
+    {"angle":-17.44,"length":14,"strokeWidth":3.5,"role":"medium"},
+    {"angle":-16.26,"length":9.25,"strokeWidth":2,"role":"minor"},
+    {"angle":-14.77,"length":14.5,"strokeWidth":3.5,"role":"major","value":"50"},
+    {"angle":-14.17,"length":9,"strokeWidth":2,"role":"minor"},
+    {"angle":-13.59,"length":8.75,"strokeWidth":2,"role":"minor"},
+    {"angle":-12.86,"length":9.25,"strokeWidth":2,"role":"minor"},
+    {"angle":-12.09,"length":9.5,"strokeWidth":2,"role":"minor"},
+    {"angle":-11.31,"length":14.25,"strokeWidth":3.5,"role":"medium"},
+    {"angle":-10.41,"length":9.5,"strokeWidth":2,"role":"minor"},
+    {"angle":-9.54,"length":9.75,"strokeWidth":2,"role":"minor"},
+    {"angle":-8.49,"length":9.25,"strokeWidth":2,"role":"minor"},
+    {"angle":-7.51,"length":9.75,"strokeWidth":2,"role":"minor"},
+    {"angle":-6.24,"length":14.5,"strokeWidth":3.5,"role":"major","value":"30"},
+    {"angle":-5.09,"length":9.5,"strokeWidth":2,"role":"minor"},
+    {"angle":-3.82,"length":9.5,"strokeWidth":2,"role":"minor"},
+    {"angle":-2.35,"length":9.75,"strokeWidth":2,"role":"minor"},
+    {"angle":-0.79,"length":9.25,"strokeWidth":2,"role":"minor"},
+    {"angle":0.9,"length":14.25,"strokeWidth":3.5,"role":"major","value":"20"},
+    {"angle":1.73,"length":9.5,"strokeWidth":2,"role":"minor"},
+    {"angle":2.78,"length":9.75,"strokeWidth":2,"role":"minor"},
+    {"angle":3.78,"length":9.5,"strokeWidth":2,"role":"minor"},
+    {"angle":4.94,"length":9.25,"strokeWidth":2,"role":"minor"},
+    {"angle":6.05,"length":14.5,"strokeWidth":3.5,"role":"medium"},
+    {"angle":7.2,"length":9.5,"strokeWidth":2,"role":"minor"},
+    {"angle":8.46,"length":9.25,"strokeWidth":2,"role":"minor"},
+    {"angle":9.85,"length":9.5,"strokeWidth":2,"role":"minor"},
+    {"angle":11.24,"length":9,"strokeWidth":2,"role":"minor"},
+    {"angle":12.63,"length":14.75,"strokeWidth":3.5,"role":"major","value":"10"},
+    {"angle":13.44,"length":4.25,"strokeWidth":2,"role":"minor"},
+    {"angle":14.28,"length":9.25,"strokeWidth":2,"role":"medium"},
+    {"angle":15.08,"length":4.25,"strokeWidth":2,"role":"minor"},
+    {"angle":15.91,"length":9.5,"strokeWidth":2,"role":"medium"},
+    {"angle":16.71,"length":4.5,"strokeWidth":2,"role":"minor"},
+    {"angle":17.7,"length":8.5,"strokeWidth":2,"role":"medium"},
+    {"angle":18.71,"length":4.25,"strokeWidth":2,"role":"minor"},
+    {"angle":19.7,"length":8.75,"strokeWidth":2,"role":"medium"},
+    {"angle":20.81,"length":4,"strokeWidth":2,"role":"minor"},
+    {"angle":21.94,"length":13.75,"strokeWidth":3.5,"role":"major","value":"5"},
+    {"angle":23.01,"length":4,"strokeWidth":2,"role":"minor"},
+    {"angle":24.18,"length":9,"strokeWidth":2,"role":"medium"},
+    {"angle":25.45,"length":4.5,"strokeWidth":2,"role":"minor"},
+    {"angle":26.74,"length":8.25,"strokeWidth":2,"role":"medium"},
+    {"angle":28.12,"length":3.75,"strokeWidth":2,"role":"minor"},
+    {"angle":29.74,"length":8,"strokeWidth":2,"role":"major","value":"2"},
+    {"angle":30.34,"length":3.75,"strokeWidth":2,"role":"minor"},
+    {"angle":30.86,"length":3.75,"strokeWidth":2,"role":"minor"},
+    {"angle":31.49,"length":3.25,"strokeWidth":2,"role":"minor"},
+    {"angle":32.01,"length":3.25,"strokeWidth":2,"role":"minor"},
+    {"angle":32.63,"length":7.5,"strokeWidth":2,"role":"major","value":"1"},
+    {"angle":33.39,"length":3.5,"strokeWidth":2,"role":"minor"},
+    {"angle":34.14,"length":2.75,"strokeWidth":2,"role":"minor"},
+    {"angle":34.83,"length":3,"strokeWidth":2,"role":"minor"},
+    {"angle":35.58,"length":3.25,"strokeWidth":2,"role":"minor"},
+    {"angle":36.31,"length":12,"strokeWidth":3.5,"role":"major","value":"0"},
+  ];
+  const ohmTickAngles = ohmTicks.map(tick => tick.angle);
   const tracedTickAngles = {"ac10": [-34.48, -33.39, -32.29, -31.23, -30.07, -29.04, -27.6, -26.15, -24.73, -23.35, -21.97, -20.5, -19.06, -17.65, -16.25, -14.82, -13.35, -11.91, -10.5, -9.12, -7.67, -6.19, -4.81, -3.37, -2.01, -0.65, 0.78, 2.14, 3.63, 4.95, 6.38, 7.74, 9.1, 10.44, 11.83, 13.21, 14.58, 15.94, 17.26, 18.63, 20.03, 21.36, 22.71, 24.05, 25.5, 26.95, 28.4, 29.9, 31.29, 32.7, 34.34], "capacitance": [-34.15, -30.45, -27.12, -24.23, -21.85, -19.89, -18.22, -16.72, -15.32, -13.96, -12.6, -7.84, -4.31, -1.55, 0.94, 3.09, 4.83, 6.26, 7.61, 9.61, 11.46, 13.04, 14.43, 15.74, 19.06, 21.3, 22.86, 24.19, 25.94, 27.14, 28.16, 28.69, 29.38, 30.23], "li": [-32.93, -30.61, -28.76, -26.55, -24.46, -22.22, -20.11, -17.97, -15.79, -13.82, -11.74, -9.64, -7.6, -5.65, -3.57, -1.65, 0.43, 2.35, 4.28, 6.26, 8.2, 10.19, 12.09, 14.11, 16.09, 18.11, 20.11, 22.13, 24.21, 26.25, 28.19, 30.54]};
   function calibratedTicks(parent, data, radius, length, color) {
     data.forEach((entry, i) => {
@@ -118,22 +210,26 @@ window.AvoScale = (() => {
     const ohm = group("scale-ohm");
     arc(ohm, geometry.ohm.radius, geometry.ohm.start, geometry.ohm.end, colors.ohm, 2.3);
     arc(ohm, geometry.ohm.bandRadius, geometry.ohm.start, geometry.ohm.end, colors.ink, 9);
-    // Tick rays detected in the source scan at radii 544-549; data retained for audit.
-    ohmTicks.forEach(({angle,length}) => tick(ohm, geometry.ohm.radius, angle, length, colors.ink));
+    // One shared transcription for Simulator, Learning, snapping and readings.
+    ohmTicks.forEach(({angle,length,strokeWidth}) => meterNeedleAlignedTick(ohm, geometry.ohm.radius, angle, length, colors.ink, strokeWidth));
     scaleCalibration.ohm.forEach((v, i) => {
-      // Crowded high-resistance labels stagger radially, never off their tick ray.
+      // Labels retain their scanned angle/radius about the fitted circle center.
       radialLabel(ohm, [578,608,593,578][i] || 569, v.angle, v.value, i < 4 ? 19 : 24);
     });
     const va = group("scale-va");
     arc(va, geometry.va.radius, geometry.va.arcStart, geometry.va.arcEnd, colors.ink);
-    ticks(va, { radius: meterGeometry.scales.va.radius, startAngle: geometry.va.start, endAngle: geometry.va.end, tickCount: 50, tickLength: -9 });
+    for (let i = 0; i <= 50; i++) {
+      const major = i % 5 === 0;
+      meterNeedleAlignedTick(va, geometry.va.radius, angleAt(geometry.va, i, 50),
+        -9 * (major ? 1.8 : 1), colors.ink, major ? 2.5 : 1.7);
+    }
     [0, 50, 100, 150, 200, 250].forEach((value, i) => {
       const angle = angleAt(geometry.va, i, 5);
       [value, value / 5, value / 25].forEach((v, row) => radialLabel(va, 496 - row * 18, angle, v, 18));
     });
     const ac = group("scale-ac10v");
     arc(ac, geometry.ac10.radius, geometry.ac10.start, geometry.ac10.end, colors.ac);
-    tracedTickAngles.ac10.forEach((angle,i) => tick(ac, meterGeometry.scales.ac10.radius, angle, i%10===0 ? 12 : 7, colors.ac));
+    tracedTickAngles.ac10.forEach((angle,i) => meterNeedleAlignedTick(ac, meterGeometry.scales.ac10.radius, angle, i%10===0 ? 12 : 7, colors.ac));
     const capacitance = group("scale-capacitance");
     arc(capacitance, geometry.capacitance.radius, geometry.capacitance.start, geometry.capacitance.end, colors.ink, 1.5);
     tracedTickAngles.capacitance.forEach(angle => tick(capacitance, meterGeometry.scales.capacitance.radius, angle, scaleCalibration.capacitance.some(v=>v.angle===angle) ? -12 : -6, colors.ink));
@@ -180,5 +276,5 @@ window.AvoScale = (() => {
     });
     element("path", { d: "M194 296h27v13h-27z M197 305q10-8 21 0 M207 307v-10", fill: "none", stroke: colors.null, "stroke-width": 1.7 }, sides);
   }
-  return { render, scaleCalibration, meterGeometry, ohmTickAngles, ohmTicks, tracedTickAngles, point, element, ticks, arc, tick, radialLabel };
+  return { render, scaleCalibration, meterGeometry, ohmTickAngles, ohmTicks, tracedTickAngles, point, element, ticks, arc, tick, radialLabel, needlePivotInScaleSpace, meterNeedleAlignedTick };
 })();
